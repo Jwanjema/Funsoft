@@ -46,350 +46,113 @@ function App() {
     }, 100);
   };
 
+  useEffect(() => {
+    if (activeTab === 'home') {
+      document.body.classList.add('home-active-body');
+    } else {
+      document.body.classList.remove('home-active-body');
+    }
+    return () => {
+      document.body.classList.remove('home-active-body');
+    };
+  }, [activeTab]);
+
   return (
-    <div className="app">
-      <nav className="navbar">
-        <div className="nav-container">
-          <div className="logo" onClick={() => {
-            setActiveTab('home');
-            setMobileMenuOpen(false);
-          }}>
-            <img src={logoImage} alt="FUNSOFT Healthcare Systems Logo" className="logo-image" />
-          </div>
-          
-          <div className={`nav-links ${mobileMenuOpen ? 'active' : ''}`}>
-            {tabs.map((tab) => (
-              <button
-                key={tab}
-                className={`nav-link ${activeTab === tab ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveTab(tab);
-                  setMobileMenuOpen(false);
-                }}
-              >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </button>
-            ))}
-          </div>
-          
-          <div className="nav-buttons">
-            <button className="nav-demo" onClick={handleScheduleDemo}>
-              Schedule Consultation
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
+    <div className={`app ${activeTab === 'home' ? 'home-active' : ''}`}>
+      {/* Centered Sticky Three-Pill Navbar (Global across all pages) */}
+      <nav className="pill-navbar">
+        {/* Left Pill - Brand Logo Icon */}
+        <div className="pill-logo-container" onClick={() => { setActiveTab('home'); setMobileMenuOpen(false); }}>
+          <svg width="18" height="18" viewBox="0 0 256 256" fill="none">
+            <path fill="#15b5ed" d="M 160 88 L 194 34 L 216 0 L 256 0 L 256 40 L 221.5 93.5 L 200 128 L 256 128 L 256 256 L 96 256 L 96 168 L 64.246 220 L 40 256 L 0 256 L 0 216 L 34 162 L 56 128 L 0 128 L 0 0 L 160 0 Z" />
+          </svg>
+        </div>
+
+        {/* Middle Pill - Navigation Tabs */}
+        <div className="pill-links-container">
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              className={`pill-nav-link ${activeTab === tab ? 'active' : ''}`}
+              onClick={() => {
+                setActiveTab(tab);
+                setMobileMenuOpen(false);
+              }}
+            >
+              {tab === 'services' ? 'Our Services' : tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
-          </div>
-          
-          <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? '✕' : '☰'}
+          ))}
+        </div>
+
+        {/* Right Pill - Sticky consultation CTA */}
+        <div className="pill-cta-container" onClick={handleScheduleDemo}>
+          <button className="pill-cta-button">
+            Consultation <span className="arrow-span">→</span>
           </button>
         </div>
       </nav>
 
       <main className="main-content">
-        {activeTab === 'home' && <HomeSection setActiveTab={setActiveTab} scrollToMap={scrollToMap} />}
+        {activeTab === 'home' && <HomeSection setActiveTab={setActiveTab} />}
         {activeTab === 'services' && <ServicesSection setActiveTab={setActiveTab} />}
         {activeTab === 'about' && <AboutSection />}
         {activeTab === 'testimonials' && <TestimonialsSection />}
         {activeTab === 'contact' && <ContactSection />}
       </main>
 
-      <Footer setActiveTab={setActiveTab} scrollToMap={scrollToMap} logoImage={logoImage} />
+      {activeTab !== 'home' && (
+        <Footer setActiveTab={setActiveTab} scrollToMap={scrollToMap} logoImage={logoImage} />
+      )}
     </div>
   );
 }
 
 // ==================== HOME SECTION ====================
-function HomeSection({ setActiveTab, scrollToMap }) {
-  const mainStats = [
-    { value: "200+", label: "Healthcare Facilities", icon: "🏥" },
-    { value: "15K+", label: "Daily System Users", icon: "👥" },
-    { value: "2M+", label: "Patient Records", icon: "📋" },
-    { value: "15+", label: "African Countries", icon: "🌍" },
-  ];
-
-  const reviewStats = [
-    { number: "98.5%", label: "Patient Satisfaction", trend: "+5.2% vs last month" },
-    { number: "60%", label: "Reduced Wait Times", trend: "Average decrease" },
-    { number: "120%", label: "Revenue Increase", trend: "For partner hospitals" },
-    { number: "99.9%", label: "System Uptime", trend: "24/7 Availability" },
-  ];
-
-  const features = [
-    { icon: "⚡", title: "Real-time Analytics", desc: "Live dashboard with actionable insights" },
-    { icon: "📊", title: "Electronic Health Records", desc: "Seamless patient data management" },
-    { icon: "🔄", title: "Multi-department Integration", desc: "Fully integrated hospital operations" },
-    { icon: "💳", title: "M-PESA Ready", desc: "Built-in mobile payment processing" },
-    { icon: "📢", title: "SMS & Email", desc: "Automated patient communication" },
-    { icon: "⏰", title: "Workflow Alerts", desc: "Smart reminders & notifications" },
-  ];
-
-  const products = [
-    { name: "Basic Clinic", price: "$3,999", beds: "0-50 Bed Hospital", tag: "POPULAR" },
-    { name: "Standard Hospital", price: "$5,999", beds: "0-50 Bed Hospital", tag: "FEATURED", popular: true },
-    { name: "Enterprise Plus", price: "$8,999", beds: "51-100+ Bed Hospital", tag: "NEW" }
-  ];
-
+function HomeSection({ setActiveTab }) {
   return (
-    <div className="home-section">
-      <div className="section-content">
-        {/* Hero Section */}
-        <div className="home-grid">
-          <div className="home-left">
-            <div className="hero-badge">
-              <span className="pulse-dot"></span>
-              MOH Approved & Certified
-            </div>
-            <h1 className="hero-title">
-              Cloud-Based
-              <span className="gradient-text"> Healthcare Platform</span>
+    <div className="home-video-wrapper">
+      {/* Fullscreen Looping Video Background */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="home-video-bg"
+        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_215831_c6a8989c-d716-4d8d-8745-e972a2eec711.mp4"
+      />
+      
+      {/* Deep Glassmorphic Contrast Overlay */}
+      <div className="home-video-overlay" />
+
+      {/* Foreground Container */}
+      <div className="home-foreground-wrapper">
+        {/* Bottom-left Aligned Premium Content */}
+        <div className="pill-hero-outer">
+          <div className="pill-hero-inner">
+            {/* Badge Link */}
+            <a href="#" className="pill-hero-badge group" onClick={(e) => { e.preventDefault(); handleScheduleDemo(); }}>
+              MOH Approved & Certified Solutions <span className="arrow-span">→</span>
+            </a>
+
+            {/* Headline */}
+            <h1 className="pill-hero-title">
+              Simple, smart healthcare operating systems made for hospitals that keep saving lives.
             </h1>
-            <p className="hero-desc">
-              Trusted by 200+ healthcare facilities across Africa. Real-time analytics, 
-              M-PESA integration, and electronic health records in one seamless system.
+            {/* Subtext */}
+            <p className="pill-hero-desc">
+              Streamline patient records, automate billing, and reclaim your facility's efficiency now.
             </p>
-            
-            <div className="hero-stats-row">
-              {mainStats.map((stat, i) => (
-                <div key={i} className="hero-stat-card">
-                  <div className="hero-stat-icon">{stat.icon}</div>
-                  <div className="hero-stat-value">{stat.value}</div>
-                  <div className="hero-stat-label">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
 
-          <div className="home-right">
-            <div className="hero-background-container">
-              <img src={backgroundImage} alt="Healthcare System Overview" className="hero-background-image" />
-            </div>
-          </div>
-        </div>
-
-        {/* System Review Section */}
-        <div className="system-review-section">
-          <div className="review-header">
-            <h2>System Performance Review</h2>
-            <p>Key metrics & analytics from our healthcare platform</p>
-          </div>
-          <div className="review-stats-grid">
-            {reviewStats.map((stat, i) => (
-              <div key={i} className="review-stat-card">
-                <span className="review-stat-number">{stat.number}</span>
-                <div className="review-stat-label">{stat.label}</div>
-                <div className="review-stat-trend">{stat.trend}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* System Overview Section - 4 Cards */}
-        <div className="system-overview-section">
-          <div className="system-overview-title">
-            <h2>System Overview Dashboard</h2>
-            <p>Real-time patient insights and operational metrics</p>
-          </div>
-          
-          <div className="overview-grid">
-            {/* SYSTEM HEALTH CARD */}
-            <div className="overview-card">
-              <div className="card-header">
-                <div className="card-icon">🖥️</div>
-                <h3>SYSTEM HEALTH</h3>
-              </div>
-              <div className="system-health-stats">
-                <div className="health-metric">
-                  <div className="health-metric-title">System Uptime</div>
-                  <div className="health-metric-value">99.9%</div>
-                  <div className="health-metric-bar">
-                    <div className="health-metric-fill" style={{ width: '99.9%' }}></div>
-                  </div>
-                </div>
-                <div className="health-metric">
-                  <div className="health-metric-title">Response Time</div>
-                  <div className="health-metric-value">&lt;200ms</div>
-                  <div className="health-metric-bar">
-                    <div className="health-metric-fill" style={{ width: '98%' }}></div>
-                  </div>
-                </div>
-                <div className="health-metric">
-                  <div className="health-metric-title">Data Sync Rate</div>
-                  <div className="health-metric-value">100%</div>
-                  <div className="health-metric-bar">
-                    <div className="health-metric-fill" style={{ width: '100%' }}></div>
-                  </div>
-                </div>
-                <div className="health-metric">
-                  <div className="health-metric-title">Backup Success</div>
-                  <div className="health-metric-value">99.99%</div>
-                  <div className="health-metric-bar">
-                    <div className="health-metric-fill" style={{ width: '99.99%' }}></div>
-                  </div>
-                </div>
-                <div className="server-status">
-                  <div className="status-dot"></div>
-                  <span style={{ color: '#2dd4bf', fontSize: '0.7rem' }}>All Systems Operational</span>
-                </div>
-              </div>
-            </div>
-
-            {/* PATIENT SATISFACTION CARD */}
-            <div className="overview-card">
-              <div className="card-header">
-                <div className="card-icon">⭐</div>
-                <h3>PATIENT SATISFACTION</h3>
-              </div>
-              <div className="performance-stats">
-                <div className="stat-row">
-                  <span className="stat-label">Overall Rating:</span>
-                  <span className="stat-value">4.8/5.0</span>
-                </div>
-                <div className="satisfaction-bar">
-                  <div className="bar-container">
-                    <div className="bar-fill-satisfaction" style={{ width: '96%' }}></div>
-                  </div>
-                  <div className="satisfaction-stats">
-                    <span className="satisfaction-item"><span>78%</span> Very Satisfied</span>
-                    <span className="satisfaction-item"><span>16%</span> Satisfied</span>
-                    <span className="satisfaction-item"><span>4%</span> Neutral</span>
-                    <span className="satisfaction-item"><span>2%</span> Dissatisfied</span>
-                  </div>
-                </div>
-                <div className="stat-row" style={{ marginTop: '0.5rem' }}>
-                  <span className="stat-label">Would Recommend:</span>
-                  <span className="stat-value">94%</span>
-                </div>
-              </div>
-            </div>
-
-            {/* GLOBAL REACH CARD */}
-            <div className="overview-card">
-              <div className="card-header">
-                <div className="card-icon">🌍</div>
-                <h3>GLOBAL REACH</h3>
-              </div>
-              <div style={{ textAlign: 'center', marginTop: '0.25rem' }}>
-                <div className="global-number">15+</div>
-                <div style={{ fontSize: '0.7rem', color: '#64748B', marginBottom: '0.5rem' }}>African Countries</div>
-                <div className="global-number" style={{ fontSize: '1.3rem', marginTop: '0' }}>200+</div>
-                <div style={{ fontSize: '0.7rem', color: '#64748B', marginBottom: '0.5rem' }}>Healthcare Facilities</div>
-                <div className="satisfaction-bar">
-                  <div className="bar-container">
-                    <div className="bar-fill-satisfaction" style={{ width: '85%' }}></div>
-                  </div>
-                  <div className="satisfaction-stats">
-                    <span className="satisfaction-item"><span>85%</span> Active Usage</span>
-                    <span className="satisfaction-item"><span>92%</span> Renewal Rate</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* FINANCIAL METRICS CARD */}
-            <div className="overview-card">
-              <div className="card-header">
-                <div className="card-icon">💰</div>
-                <h3>FINANCIAL METRICS</h3>
-              </div>
-              <div className="amount">$12.5M</div>
-              <div style={{ textAlign: 'center', fontSize: '0.6rem', color: '#64748B', marginBottom: '0.25rem' }}>Annual Revenue Processed</div>
-              <div className="followup">92% Collection Rate</div>
-              <div className="metrics-row">
-                <div className="metric-item">
-                  <span className="metric-value">+120%</span>
-                  <span className="metric-label">Revenue Growth</span>
-                </div>
-                <div className="metric-item">
-                  <span className="metric-value">$3.2B+</span>
-                  <span className="metric-label">Claims Processed</span>
-                </div>
-              </div>
-              <div className="metrics-row" style={{ marginTop: '0.3rem', paddingTop: '0.3rem' }}>
-                <div className="metric-item">
-                  <span className="metric-value">40%</span>
-                  <span className="metric-label">Cost Reduction</span>
-                </div>
-                <div className="metric-item">
-                  <span className="metric-value">3.5x</span>
-                  <span className="metric-label">ROI Average</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Technology Stack Section */}
-        <div className="tech-stack-section-home">
-          <div className="section-header">
-            <span className="section-badge">Our Technology Stack & Capabilities</span>
-            <div className="tech-image-container">
-              <img src={tecImage} alt="Technology Stack" className="tech-full-image" />
-            </div>
-            <h2>Powered by Funsoft</h2>
-            <div className="powered-image-container">
-              <img src={appImage} alt="Powered by Funsoft" className="powered-full-image" />
-            </div>
-            <p>Enterprise-grade technologies powering healthcare across Africa</p>
-          </div>
-        </div>
-
-        {/* Features Section */}
-        <div className="features-section">
-          <div className="section-header">
-            <span className="section-badge">Key Features</span>
-            <h2>Comprehensive Healthcare Management</h2>
-            <p>Everything you need to run a modern healthcare facility</p>
-          </div>
-          <div className="features-grid">
-            {features.map((feature, i) => (
-              <div key={i} className="feature-card-large">
-                <div className="feature-icon-large">{feature.icon}</div>
-                <h3>{feature.title}</h3>
-                <p>{feature.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Products Section */}
-        <div className="products-section-home">
-          <div className="section-header">
-            <span className="section-badge">Our Products</span>
-            <h2>Ministry of Health Approved Solutions</h2>
-            <p>Flexible pricing for facilities of all sizes</p>
-          </div>
-          <div className="products-grid">
-            {products.map((product, i) => (
-              <div key={i} className={`product-card ${product.popular ? 'popular' : ''}`}>
-                {product.popular && <div className="popular-badge">⭐ Most Popular</div>}
-                <div className="product-tag">{product.tag}</div>
-                <h3>OUT PATIENT CENTRE</h3>
-                <div className="product-price">
-                  <span className="price">{product.price}</span>
-                  <span className="price-note">+ VAT (16%)</span>
-                </div>
-                <p className="product-beds">{product.beds}</p>
-                <button 
-                  className="product-btn" 
-                  onClick={() => handleGmailEnquiry(
-                    `${product.name} Package - ${product.price}`,
-                    `Hello,\n\nI'm interested in the ${product.name} package (${product.price}) for ${product.beds}.\n\nPlease provide more information about:\n- Implementation timeline\n- Training requirements\n- Ongoing support options\n\nThank you.`
-                  )}
-                >
-                  Enquire Now →
-                </button>
-                <p className="product-note">Training & support fees billed separately</p>
-              </div>
-            ))}
+            {/* CTA Button */}
+            <button className="pill-hero-cta group" onClick={handleScheduleDemo}>
+              Try a free demo <span className="arrow-span">→</span>
+            </button>
           </div>
         </div>
       </div>
     </div>
   );
 }
-
 // ==================== SERVICES SECTION - WITH FIREBASE INTEGRATION ====================
 function ServicesSection({ setActiveTab }) {
   const [selectedService, setSelectedService] = useState(null);
